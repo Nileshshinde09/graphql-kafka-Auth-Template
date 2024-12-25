@@ -1,12 +1,18 @@
 import { ApolloServer } from "@apollo/server";
-import user from "./user";
-import { ApiError } from "../lib";
+import { UserGraphQLResolvers, UserGraphQLSchema } from "./user";
+import { ApiError } from "../../lib";
 const createApolloGraphqlServer = async () => {
-  const typeDefs = ``;
+  const typeDefs = `
+  #User
+  ${UserGraphQLSchema.typeDefs}
+  ${UserGraphQLSchema.mutations}
+  ${UserGraphQLSchema.queries}
+  `;
   const resolvers = {
-    Query: {},
-    Mutation: {},
+    Query: { ...UserGraphQLResolvers.queries },
+    Mutation: { ...UserGraphQLResolvers.mutations },
   };
+
   try {
     try {
       const gqlServer = new ApolloServer({
@@ -25,7 +31,10 @@ const createApolloGraphqlServer = async () => {
     }
   } catch (err) {
     console.error("Error starting Apollo Server:", err);
-    return new ApiError(500, "Failed to start the Apollo GraphQL server");
+    return ApiError.GraphQLError(
+      500,
+      "Failed to start the Apollo GraphQL server"
+    );
   }
 };
 
