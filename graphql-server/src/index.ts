@@ -5,13 +5,15 @@ import { makeExecutableSchema } from "@graphql-tools/schema";
 
 const typeDefs = `
   type Query {
-    hello: String
+    hello(name: String): String
   }
 `;
 
 const resolvers = {
   Query: {
-    hello: () => "Hello, world!",
+    hello: (_: any, args: { name: string }) => {
+      return `Hello, ${args.name?args.name:"World " }!`;
+    },
   },
 };
 
@@ -42,9 +44,3 @@ async function startServer() {
 }
 
 startServer();
-
-
-
-
-
-
