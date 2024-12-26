@@ -13,16 +13,24 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Check, Minus } from "lucide-react";
 import { Button } from "./ui/button";
 import { Utils } from "@/lib/utils";
+import { useTheme } from "./ui/theme-provider";
 interface settingProps {
   children: string;
   className?: string;
 }
 const items = [
-    { id: "radio-18-r1", value: "r1", label: "Light", image: "/ui-light.png" },
-    { id: "radio-18-r2", value: "r2", label: "Dark", image: "/ui-dark.png" },
-    { id: "radio-18-r3", value: "r3", label: "System", image: "/ui-system.png" },
-  ];
+  { id: "radio-18-r1", value: "light", label: "Light", image: "/ui-light.png" },
+  { id: "radio-18-r2", value: "dark", label: "Dark", image: "/ui-dark.png" },
+  {
+    id: "radio-18-r3",
+    value: "system",
+    label: "System",
+    image: "/ui-system.png",
+  },
+];
+
 const Settings: React.FC<settingProps> = ({ children, className }) => {
+  const { setTheme } = useTheme();
   return (
     <div className={Utils.cn("", className)}>
       <Drawer>
@@ -40,7 +48,11 @@ const Settings: React.FC<settingProps> = ({ children, className }) => {
               <legend className="text-sm font-medium leading-none text-foreground">
                 Choose a theme
               </legend>
-              <RadioGroup className="flex gap-3" defaultValue="r1">
+              <RadioGroup
+                className="flex gap-3"
+                defaultValue="r1"
+                onValueChange={(val: any) => setTheme(val)}
+              >
                 {items.map((item) => (
                   <label key={item.id}>
                     <RadioGroupItem
