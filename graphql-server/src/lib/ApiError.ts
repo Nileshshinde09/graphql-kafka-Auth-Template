@@ -1,13 +1,13 @@
 import { GraphQLError } from "graphql";  // For GraphQL integration
-
+import { STATUSCODE } from "../constants/Enums";
 export class ApiError extends Error {
-  public statusCode: number;
+  public statusCode: STATUSCODE;
   public success: boolean;
   public errors: string[];
   public data: any;
 
   constructor(
-    statusCode: number,
+    statusCode: STATUSCODE,
     message: string = "Something went wrong",
     errors: string[] = [],
     data: any = null
@@ -25,7 +25,7 @@ export class ApiError extends Error {
   }
 
   // Static method to handle GraphQL errors
-  static GraphQLError(statusCode: number, message: string, errors: string[] = []): GraphQLError {
+  static GraphQLError(statusCode: STATUSCODE, message: string, errors: string[] = []): GraphQLError {
     const apiError = new ApiError(statusCode, message, errors);
     return new GraphQLError(message, {
       extensions: {
@@ -37,7 +37,7 @@ export class ApiError extends Error {
   }
 
   // Static method to handle Socket.IO errors
-  static SocketIOError(socket: any, statusCode: number, message: string, errors: string[] = []): void {
+  static SocketIOError(socket: any, statusCode: STATUSCODE, message: string, errors: string[] = []): void {
     const apiError = new ApiError(statusCode, message, errors);
 
     // Emit the error to the client via the socket

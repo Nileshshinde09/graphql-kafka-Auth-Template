@@ -3,8 +3,13 @@ import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import dotenv from "dotenv";
+import { middlewareRootFC } from "./middleware/app/graphql";
 dotenv.config({ path: "../.env" });
-
+interface MyContext {
+  req: Request;
+  res: Response;
+  customRequestType: string;
+}
 const typeDefs = `
   type Query {
     hello(name: String): String
@@ -16,7 +21,7 @@ const resolvers = {
     hello: (_: any, args: { name: string }) => {
       return `Hello, ${args.name ? args.name : "World "}!`;
     },
-  },     
+  },
 };
 
 async function startServer() {
@@ -27,21 +32,18 @@ async function startServer() {
   const server = new ApolloServer({ schema });
 
   // Middleware order is important
-  app.use(express.json()); // Parse JSON body before Apollo middleware
+  app.use(express.json());
 
   await server.start();
   app.use(
     "/graphql",
     //@ts-ignore
-    expressMiddleware(server, {
-      context: async ({ req }) => {
-        const token = req.headers["token"]; // Token processing
-        return { user: token ? decodeToken(token) : null };
-      },
+    expressMiddleware<MyContext>(server, {
+      context: middlewareRootFC,
     })
   );
   app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}/graphql`);
+    console.log(`GrapghQL Server running on http://localhost:${PORT}/graphql`);
   });
 }
 
