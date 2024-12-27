@@ -5,8 +5,13 @@ import Settings from "./settings";
 import BoxRevealHeroSection from "./heroSectionText";
 import AnimatedBeam from "./animatedBeam";
 import MorphingText from "./morphingText";
+import Menue from "./menubar";
+import HeroSectionCardHoverEffect from "./HeroSectionCardHover";
+
 export {
+    HeroSectionCardHoverEffect,
     MorphingText,
+    Menue,
     AnimatedBeam,
     BoxRevealHeroSection,
     PageNotFound,

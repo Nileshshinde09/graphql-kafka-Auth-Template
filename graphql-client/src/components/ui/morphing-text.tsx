@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useRef } from "react";
 
 import { cn } from "@/lib/utils";
@@ -25,13 +23,16 @@ const useMorphingText = (texts: string[]) => {
       current2.style.opacity = `${Math.pow(fraction, 0.4) * 100}%`;
 
       const invertedFraction = 1 - fraction;
-      current1.style.filter = `blur(${Math.min(8 / invertedFraction - 8, 100)}px)`;
+      current1.style.filter = `blur(${Math.min(
+        8 / invertedFraction - 8,
+        100
+      )}px)`;
       current1.style.opacity = `${Math.pow(invertedFraction, 0.4) * 100}%`;
 
       current1.textContent = texts[textIndexRef.current % texts.length];
       current2.textContent = texts[(textIndexRef.current + 1) % texts.length];
     },
-    [texts],
+    [texts]
   );
 
   const doMorph = useCallback(() => {
@@ -97,12 +98,13 @@ const Texts: React.FC<Pick<MorphingTextProps, "texts">> = ({ texts }) => {
   const { text1Ref, text2Ref } = useMorphingText(texts);
   return (
     <>
+    
       <span
-        className="absolute inset-x-0 top-0 m-auto inline-block w-full"
+        className="absolute inset-x-0 top-0 m-auto inline-block w-full text-gray-200"
         ref={text1Ref}
       />
       <span
-        className="absolute inset-x-0 top-0 m-auto inline-block w-full"
+        className="absolute inset-x-0 top-0 m-auto inline-block w-full text-gray-200"
         ref={text2Ref}
       />
     </>
@@ -130,7 +132,7 @@ const MorphingText: React.FC<MorphingTextProps> = ({ texts, className }) => (
   <div
     className={cn(
       "relative mx-auto w-full max-w-screen-md text-center font-sans font-bold leading-none [filter:url(#threshold)_blur(0.6px)] md:h-24 lg:text-[6rem]",
-      className,
+      className
     )}
   >
     <Texts texts={texts} />

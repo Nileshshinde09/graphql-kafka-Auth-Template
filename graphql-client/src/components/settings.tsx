@@ -15,7 +15,7 @@ import { Button } from "./ui/button";
 import { Utils } from "@/lib/utils";
 import { useTheme } from "./ui/theme-provider";
 interface settingProps {
-  children: string;
+  children: React.ReactNode;
   className?: string;
 }
 const items = [
