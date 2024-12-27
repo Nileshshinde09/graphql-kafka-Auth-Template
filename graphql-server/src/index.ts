@@ -2,6 +2,8 @@ import express from "express";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { makeExecutableSchema } from "@graphql-tools/schema";
+import dotenv from "dotenv";
+dotenv.config({ path: "../.env" });
 
 const typeDefs = `
   type Query {
@@ -12,9 +14,9 @@ const typeDefs = `
 const resolvers = {
   Query: {
     hello: (_: any, args: { name: string }) => {
-      return `Hello, ${args.name?args.name:"World " }!`;
+      return `Hello, ${args.name ? args.name : "World "}!`;
     },
-  },
+  },     
 };
 
 async function startServer() {
