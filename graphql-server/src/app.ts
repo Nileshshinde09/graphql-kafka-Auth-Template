@@ -3,7 +3,7 @@ import cors from "cors";
 import express from "express";
 import type { Request, Response, NextFunction } from "express";
 import { rateLimit } from "express-rate-limit";
-import type {Options as RateLimitOptions} from "express-rate-limit"
+import type { Options as RateLimitOptions } from "express-rate-limit";
 import session from "express-session";
 import fs from "fs";
 import { createServer } from "http";
@@ -15,13 +15,8 @@ import { fileURLToPath } from "url";
 import YAML from "yaml";
 import { initializeSocketIO } from "./apps/sockets/index.ts";
 import { ApiError } from "./lib/ApiError.js";
-import healthcheckRouter from "./apps/restApi/routes/healthcheck.routes.ts"
-import userRouter from "./apps/restApi/routes/auth/user.routes.ts"
-import { makeExecutableSchema } from "@graphql-tools/schema";
-import { ApolloServer } from "@apollo/server";
-import { typeDefs } from "./apps/graphql/user/typedef.js";
-import Resolvers from "./apps/graphql/user/resolvers.js";
-
+import healthcheckRouter from "./apps/restApi/routes/healthcheck.routes.ts";
+import userRouter from "./apps/restApi/routes/auth/user.routes.ts";
 // TypeScript utilities for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -87,8 +82,9 @@ const limiter = rateLimit({
 });
 
 app.use(limiter);
+app.use(express.json({limit:"16kb"}))
+//GraphQL
 
-app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
@@ -115,11 +111,10 @@ app.use("/api/v1/users", userRouter);
 initializeSocketIO(io);
 
 // Apollo Server setup
-const schema = makeExecutableSchema({ typeDefs, resolvers });
-const server = new ApolloServer({ schema }); 
 
 // Common error handling middleware
-import { errorHandler } from "./middleware/error.middlewares.ts";
+import { errorHandler } from "./middleware";
+import createApolloGraphqlServer from "./apps/graphql/index.ts";
 app.use(errorHandler);
-
+app.use(createApolloGraphqlServer
 export { httpServer };

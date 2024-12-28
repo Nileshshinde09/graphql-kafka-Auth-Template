@@ -1,95 +1,80 @@
-import express from "express";
-import { ApolloServer } from "@apollo/server";
-import { expressMiddleware } from "@apollo/server/express4";
-import { makeExecutableSchema } from "@graphql-tools/schema";
 import dotenv from "dotenv";
-import { middlewareRootFC } from "./middleware/app/graphql";
+import { logger } from "./logger";
+import { connectMongoDB, prismaClient } from "./db";
+import { httpServer } from "./app";
+
+// Load environment variables
 dotenv.config({ path: "../.env" });
-interface MyContext {
-  req: Request;
-  res: Response;
-  customRequestType: string;
-}
-const typeDefs = `
-  type Query {
-    hello(name: String): String
-  }
-`;
-
-const resolvers = {
-  Query: {
-    hello: (_: any, args: { name: string }) => {
-      return `Hello, ${args.name ? args.name : "World "}!`;
-    },
-  },
-};
-
-async function startServer() {
-  const app = express();
-  const PORT = 8000;
-
-  const schema = makeExecutableSchema({ typeDefs, resolvers });
-  const server = new ApolloServer({ schema });
-
-  // Middleware order is important
-  app.use(express.json());
-
-  await server.start();
-  app.use(
-    "/graphql",
-    //@ts-ignore
-    expressMiddleware<MyContext>(server, {
-      context: middlewareRootFC,
-    })
-  );
-  app.listen(PORT, () => {
-    console.log(`GrapghQL Server running on http://localhost:${PORT}/graphql`);
-  });
-}
-
-startServer();
-
-
-
-import dotenv from "dotenv";
-import { httpServer } from "./app.js";
-import connectDB from "./db/index.js";
-import logger from "./logger/winston.logger.js";
-
-dotenv.config({
-  path: "./.env",
-});
 
 /**
- * Starting from Node.js v14 top-level await is available and it is only available in ES modules.
- * This means you can not use it with common js modules or Node version < 14.
+ * Ensure essential environment variables are defined
  */
-const majorNodeVersion = +process.env.NODE_VERSION?.split(".")[0] || 0;
+const requiredEnvVariables: string[] = ["NODE_VERSION", "PORT"];
+const missingEnv: string[] = requiredEnvVariables.filter((key) => !process.env[key]);
 
-const startServer = () => {
-  httpServer.listen(process.env.PORT || 8080, () => {
-    logger.info(
-      `📑 Visit the documentation at: http://localhost:${
-        process.env.PORT || 8080
-      }`
-    );
-    logger.info("⚙️  Server is running on port: " + process.env.PORT);
+if (missingEnv.length > 0) {
+  logger.winstonLogger.error(
+    `❌ Missing required environment variables: ${missingEnv.join(", ")}`
+  );
+  process.exit(1); // Exit process due to critical error
+}
+
+const majorNodeVersion: number = Number(process.env.NODE_VERSION?.split(".")[0] || 0);
+
+/**
+ * Starts the server on the specified port
+ */
+const startServer = (): void => {
+  const port: number = parseInt(process.env.PORT || "8000", 10);
+
+  httpServer.listen(port, () => {
+    logger.winstonLogger.info(`📑 Visit the documentation at: http://localhost:${port}`);
+    logger.winstonLogger.info(`⚙️  Server is running on port: ${port}`);
   });
 };
 
-if (majorNodeVersion >= 14) {
+/**
+ * Graceful shutdown handling
+ */
+const handleExit = async (signal: string): Promise<void> => {
+  logger.winstonLogger.info(`📴 Received ${signal}. Closing server gracefully...`);
   try {
-    await connectDB();
+    if (prismaClient) {
+      await prismaClient.$disconnect();
+      logger.winstonLogger.info("✅ Prisma Client disconnected.");
+    }
+    process.exit(0);
+  } catch (err) {
+    logger.winstonLogger.error("❌ Error during shutdown: ", err);
+    process.exit(1);
+  }
+};
+
+/**
+ * Main execution flow
+ */
+const initializeApp = async (): Promise<void> => {
+  if (majorNodeVersion < 14) {
+    logger.winstonLogger.error("❌ Node.js v14 or higher is required.");
+    process.exit(1);
+  }
+
+  try {
+    await connectMongoDB();
+    logger.winstonLogger.info("✅ Connected to MongoDB successfully.");
     startServer();
   } catch (err) {
-    logger.error("Mongo db connect error: ", err);
+    logger.winstonLogger.error("❌ MongoDB connection failed: ", (err as Error).stack || err);
+    process.exit(1); // Exit process on critical failure
   }
-} else {
-  connectDB()
-    .then(() => {
-      startServer();
-    })
-    .catch((err) => {
-      logger.error("Mongo db connect error: ", err);
-    });
-}
+};
+
+// Start the application
+initializeApp().catch((err) =>
+  logger.winstonLogger.error("❌ Initialization failed: ", (err as Error).stack || err)
+);
+
+// Handle termination signals
+["SIGINT", "SIGTERM"].forEach((signal) => {
+  process.on(signal as NodeJS.Signals, () => handleExit(signal));
+});

@@ -4,9 +4,8 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
 } from "react-router-dom";
-import { Dashboard, Home, Profile } from "./pages";
+import { Dashboard, Docs, Home, Profile } from "./pages";
 import { AuthLayout, Login, SignUp } from "./pages/GraphQLAuth";
-
 import { PageNotFound, ProtectedAuthLayout } from "./components";
 
 import App from "./App";
@@ -19,6 +18,14 @@ const router = createBrowserRouter(
         element={
           <ProtectedAuthLayout authentication={true}>
               <Home />
+          </ProtectedAuthLayout>
+        }
+      />
+      <Route
+        path="/docs"
+        element={
+          <ProtectedAuthLayout authentication={true}>
+              <Docs />
           </ProtectedAuthLayout>
         }
       />

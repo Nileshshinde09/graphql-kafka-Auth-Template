@@ -1,48 +1,57 @@
 import mongoose from "mongoose";
-
-import logger from "../logger/winston.logger.js";
-import { ApiError } from "../utils/ApiError.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { removeUnusedMulterImageFilesOnError } from "../utils/helpers.js";
+import type { Request, Response, NextFunction } from "express";
+import { ApiError } from "../lib/ApiError.js";
+import { logger } from "../logger";
 
 /**
+ * Error handling middleware for catching and formatting errors.
  *
- * @param {Error | ApiError} err
- * @param {import("express").Request} req
- * @param {import("express").Response} res
- * @param {import("express").NextFunction} next
- *
- *
- * @description This middleware is responsible to catch the errors from any request handler wrapped inside the {@link asyncHandler}
+ * @param {Error | ApiError} err - The error object to handle.
+ * @param {Request} req - The Express request object.
+ * @param {Response} res - The Express response object.
+ * @param {NextFunction} next - The Express next middleware function.
+ * 
+ * @description This middleware catches errors thrown by any request handler wrapped in the asyncHandler and ensures they are formatted consistently.
  */
-const errorHandler = (err, req, res, next) => {
-  let error = err;
+const errorHandler = (
+  err: Error | ApiError,
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Response => {
+  let error: ApiError;
 
-  // Check if the error is an instance of an ApiError class which extends native Error class
-  if (!(error instanceof ApiError)) {
-    // if not
-    // create a new ApiError instance to keep the consistency
+  // Check if the error is an instance of ApiError
+  if (!(err instanceof ApiError)) {
+    // Assign an appropriate status code
+    const statusCode = 
+      "statusCode" in err && typeof err.statusCode === "number"
+        ? err.statusCode
+        : err instanceof mongoose.Error
+        ? 400
+        : 500;
 
-    // assign an appropriate status code
-    const statusCode =
-      error.statusCode || error instanceof mongoose.Error ? 400 : 500;
+    // Set a message from the native Error instance or a default one
+    const message = err.message || "Something went wrong";
 
-    // set a message from native Error instance or a custom one
-    const message = error.message || "Something went wrong";
-    error = new ApiError(statusCode, message, error?.errors || [], err.stack);
+    // Wrap the error in an ApiError instance for consistency
+    error = new ApiError(statusCode, message, (err as any)?.errors || [], err.stack);
+  } else {
+    error = err;
   }
 
-  // Now we are sure that the `error` variable will be an instance of ApiError class
+  // Create a consistent error response
   const response = {
-    ...error,
+    statusCode: error.statusCode,
     message: error.message,
-    ...(process.env.NODE_ENV === "development" ? { stack: error.stack } : {}), // Error stack traces should be visible in development for debugging
+    errors: error.errors || [],
+    ...(process.env.NODE_ENV === "development" ? { stack: error.stack } : {}), // Include stack trace only in development
   };
 
-  logger.error(`${error.message}`);
+  // Log the error message
+  logger.winstonLogger.error(error.message);
 
-  removeUnusedMulterImageFilesOnError(req);
-  // Send error response
+  // Send the error response
   return res.status(error.statusCode).json(response);
 };
 

@@ -2,7 +2,7 @@
 
  class Resolvers{
     public static queries={
-
+        
     }
     public static mutations={
         

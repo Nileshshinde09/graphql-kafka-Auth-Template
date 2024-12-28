@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Drawer,
   DrawerClose,
@@ -30,7 +30,8 @@ const items = [
 ];
 
 const Settings: React.FC<settingProps> = ({ children, className }) => {
-  const { setTheme } = useTheme();
+  const { setTheme,theme } = useTheme();
+
   return (
     <div className={Utils.cn("", className)}>
       <Drawer>
@@ -50,7 +51,7 @@ const Settings: React.FC<settingProps> = ({ children, className }) => {
               </legend>
               <RadioGroup
                 className="flex gap-3"
-                defaultValue="r1"
+                defaultValue={theme}
                 onValueChange={(val: any) => setTheme(val)}
               >
                 {items.map((item) => (
