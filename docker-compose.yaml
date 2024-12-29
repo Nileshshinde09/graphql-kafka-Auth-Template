@@ -11,6 +11,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: Auth
       POSTGRES_PASSWORD: mysecurepassword
+
   zookeeper:
     container_name: zookeeper
     image: zookeeper:latest
@@ -33,5 +34,25 @@ services:
     depends_on:
       - zookeeper
 
+  mongodb:
+    container_name: mongodb
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: mymongopassword
+      MONGO_INITDB_DATABASE: Auth
+
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - 6379:6379
+    command: ["redis-server", "--appendonly", "yes"]
+
 volumes:
   postgres_data:
+  mongodb_data:

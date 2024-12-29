@@ -1,10 +1,12 @@
 import type { Server, Socket } from "socket.io";
 import cookie from "cookie";
 import jwt from "jsonwebtoken";
-import { User } from "./models/User";
 import { ApiError } from "../../lib";
 import { ChatEventEnum, STATUSCODE } from "../../constants/Enums";
-
+import { User} from "../../models/mongodb";
+import type { Document } from "mongoose";
+import type { Request } from "express";
+import type { IUser } from "../../models/mongodb/user.model";
 interface DecodedToken {
   _id: string;
 }
@@ -19,13 +21,13 @@ interface ExtendedSocket extends Socket {
 const initializeSocketIO = (io: Server): void => {
   io.on("connection", async (socket: ExtendedSocket) => {
     try {
-      // Parse the cookies from the handshake headers
+      // Parse cookies from the handshake headers
       const cookies = cookie.parse(socket.handshake.headers?.cookie || "");
 
       let token = cookies?.accessToken; // Get the access token
 
       if (!token) {
-        // If no access token in cookies, check handshake auth
+        // Check handshake auth if no token in cookies
         token = socket.handshake.auth?.token;
       }
 
@@ -41,10 +43,10 @@ const initializeSocketIO = (io: Server): void => {
       const decodedToken = jwt.verify(
         token,
         process.env.ACCESS_TOKEN_SECRET!
-      ) as DecodedToken;
+      ) as DecodedToken; 
 
-      // Retrieve the user
-      const user = await User.findById(decodedToken?._id).select(
+      // Retrieve the user from the database
+      const user: Document | null | any = await User.findById(decodedToken?._id).select(
         "-password -refreshToken -emailVerificationToken -emailVerificationExpiry"
       );
 
@@ -56,15 +58,14 @@ const initializeSocketIO = (io: Server): void => {
         );
       }
 
-      socket.user = user; // Attach user object to the socket
+      socket.user = user.toObject(); // Attach user object to the socket
 
       // Join a room with the user ID for targeted events
       socket.join(user._id.toString());
-      socket.emit(ChatEventEnum.CONNECTED_EVENT); // Notify client of successful connection
+      socket.emit(ChatEventEnum.CONNECTED_EVENT); // Notify the client of a successful connection
       console.log("User connected. UserID:", user._id.toString());
 
-      // Mount event handlers
-
+      // Event handlers
       socket.on(ChatEventEnum.DISCONNECT_EVENT, () => {
         console.log("User disconnected. UserID:", socket.user?._id);
         if (socket.user?._id) {
@@ -88,7 +89,7 @@ const initializeSocketIO = (io: Server): void => {
  * @param payload Data to send with the event.
  */
 const emitSocketEvent = (
-  req: Express.Request,
+  req: Request,
   roomId: string,
   event: string,
   payload: any

@@ -7,7 +7,7 @@ let mongoDBInstance = undefined;
 const connectMongoDB = async () => {
   try {
     const connectionInstance = await mongoose.connect(
-      `${process.env.MONGODB_URI}/${DB_NAME}`
+      `${process.env.MONGODB_URL}/${DB_NAME}`
     );
     mongoDBInstance = connectionInstance;
     logger.winstonLogger.info(

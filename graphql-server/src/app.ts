@@ -1,7 +1,7 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
-import type { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction, Application } from "express";
 import { rateLimit } from "express-rate-limit";
 import type { Options as RateLimitOptions } from "express-rate-limit";
 import session from "express-session";
@@ -16,7 +16,7 @@ import YAML from "yaml";
 import { initializeSocketIO } from "./apps/sockets/index.ts";
 import { ApiError } from "./lib/ApiError.js";
 import healthcheckRouter from "./apps/restApi/routes/healthcheck.routes.ts";
-import userRouter from "./apps/restApi/routes/auth/user.routes.ts";
+//TODO: import userRouter from "./apps/restApi/routes/auth/user.routes.ts";
 // TypeScript utilities for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,7 +30,7 @@ const swaggerDocument = YAML.parse(
   )
 );
 
-const app = express();
+const app: Application = express();
 
 const httpServer = createServer(app);
 
@@ -82,7 +82,7 @@ const limiter = rateLimit({
 });
 
 app.use(limiter);
-app.use(express.json({limit:"16kb"}))
+app.use(express.json({ limit: "16kb" }));
 //GraphQL
 
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
@@ -100,21 +100,33 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// app.use(morganMiddleware);
+//TODO: app.use(morganMiddleware);
 
 // * Healthcheck route
 app.use("/api/v1/healthcheck", healthcheckRouter);
 
 // * App APIs
-app.use("/api/v1/users", userRouter);
+//TODO: app.use("/api/v1/users", userRouter);
 
 initializeSocketIO(io);
 
-// Apollo Server setup
-
 // Common error handling middleware
-import { errorHandler } from "./middleware";
+//TODO: import { errorHandler } from "./middleware";
 import createApolloGraphqlServer from "./apps/graphql/index.ts";
-app.use(errorHandler);
-app.use(createApolloGraphqlServer
+// (async () => {
+//   const gqlServer = await createApolloGraphqlServer();
+
+//   // Middleware for Apollo Server
+//   app.use(
+//     "/graphql",
+//     cors<cors.CorsRequest>(),
+//     express.json(),
+//     //@ts-ignore
+//     expressMiddleware(gqlServer, {
+//       context: async ({ req }: { req: Request }) => ({
+//         token: req.headers.authorization,
+//       }),
+//     })
+//   );
+// })();
 export { httpServer };

@@ -10,8 +10,8 @@ import { logger } from "../logger";
  * @param {Request} req - The Express request object.
  * @param {Response} res - The Express response object.
  * @param {NextFunction} next - The Express next middleware function.
- * 
- * @description This middleware catches errors thrown by any request handler wrapped in the asyncHandler and ensures they are formatted consistently.
+ *
+ * @description This middleware catches errors thrown by any request handler wrapped in the asyncRestApiHandler and ensures they are formatted consistently.
  */
 const errorHandler = (
   err: Error | ApiError,
@@ -24,7 +24,7 @@ const errorHandler = (
   // Check if the error is an instance of ApiError
   if (!(err instanceof ApiError)) {
     // Assign an appropriate status code
-    const statusCode = 
+    const statusCode =
       "statusCode" in err && typeof err.statusCode === "number"
         ? err.statusCode
         : err instanceof mongoose.Error
@@ -35,7 +35,12 @@ const errorHandler = (
     const message = err.message || "Something went wrong";
 
     // Wrap the error in an ApiError instance for consistency
-    error = new ApiError(statusCode, message, (err as any)?.errors || [], err.stack);
+    error = new ApiError(
+      statusCode,
+      message,
+      (err as any)?.errors || [],
+      err.stack
+    );
   } else {
     error = err;
   }

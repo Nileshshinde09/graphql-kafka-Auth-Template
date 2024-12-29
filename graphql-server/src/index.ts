@@ -14,7 +14,7 @@ const missingEnv: string[] = requiredEnvVariables.filter((key) => !process.env[k
 
 if (missingEnv.length > 0) {
   logger.winstonLogger.error(
-    `❌ Missing required environment variables: ${missingEnv.join(", ")}`
+    `❌ Missing required environment variables: ${missingEnv.join(", ")} `
   );
   process.exit(1); // Exit process due to critical error
 }
