@@ -1,19 +1,45 @@
-import { Separator } from "@/components/ui/separator";
-import React from "react";
-const Docs = () => {
-  return (
-    <div className="w-full h-[94%] mt-10 rounded-xl border-2 border-[#8f89e6] flex">
-      <div className="w-[15rem] p-2 rounded-l-xl border-2 border-[#8f89e6] bg-black">
-        Nilesh Kashinath shinde
-        <Separator className="w-[100%] mx-auto bg-[#8f89e6]"/>
-      </div>
-      <div className="w-full h-full rounded-r-xl border-2 border-[#8f89e6]">
-        <div className="w-[100%] bg-black/50 h-full border-2 p-2 mx-auto rounded-r-xl">
-          hi
-        </div>
-      </div>
-    </div>
-  );
-};
+import { AppSidebar } from "@/components"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import { Separator } from "@/components/ui/separator"
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar"
 
-export default Docs;
+export default function Page() {
+  return (
+    <SidebarProvider>
+      <AppSidebar bodyBG="bg-muted/50" headerBG="bg-muted/50" className="" />
+      <SidebarInset>
+        <header className="bg-muted/50 flex h-16 shrink-0 items-center gap-2 border-b px-4">
+          <SidebarTrigger className="-ml-1" />
+          <Separator orientation="vertical" className="mr-2 h-4" />
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem className="hidden md:block">
+                <BreadcrumbLink href="#">
+                  Building Your Application
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="hidden md:block" />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </header>
+        <div className="flex flex-1 flex-col gap-4 p-4 bg-muted/50">
+          <div className="min-h-[20rem] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
+  )
+}

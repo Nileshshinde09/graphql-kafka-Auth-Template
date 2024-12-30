@@ -13,7 +13,7 @@ const App = (): React.ReactNode => {
         maxOpacity={0.5}
         flickerChance={0.1}
       />
-      <main className="absolute z-10 w-full h-screen p-4  ">
+      <main className="absolute z-10 w-full h-screen">
         <Navbar />
         <Outlet />
       </main>
