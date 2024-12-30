@@ -13,13 +13,12 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-
 export default function Page() {
   return (
     <SidebarProvider>
-      <AppSidebar bodyBG="bg-[#7e76ed] text-black" headerBG="bg-[#7e76ed] text-black" footerBG="bg-[#7e76ed] text-black" className="text-black"/>
+      <AppSidebar bodyBG="" headerBG="" footerBG="" className=""/>
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+        <header className="bg-muted/50 flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
           <Breadcrumb>
@@ -36,8 +35,8 @@ export default function Page() {
             </BreadcrumbList>
           </Breadcrumb>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="min-h-[20rem] flex-1 rounded-xl bg-muted/ md:min-h-min" />
+        <div className="flex flex-1 flex-col gap-4 p-4 bg-black">
+          <div className="min-h-[100vh] flex-1 rounded-xl bg-gray-900/50 md:min-h-min"/>
         </div>
       </SidebarInset> 
     </SidebarProvider>
