@@ -2,11 +2,11 @@ import { ApolloServer } from "@apollo/server";
 import { UserGraphQLResolvers, UserGraphQLSchema } from "./user";
 
 const createApolloGraphqlServer = async () => {
-  const typeDefs = [
-    UserGraphQLSchema.typeDefs,
-    UserGraphQLSchema.mutations,
-    UserGraphQLSchema.queries,
-  ];
+  const typeDefs = `
+  ${UserGraphQLSchema.typeDefs}
+  ${UserGraphQLSchema.mutations}
+  ${UserGraphQLSchema.queries}
+  `;
 
   const resolvers = {
     Query: { ...UserGraphQLResolvers.queries },

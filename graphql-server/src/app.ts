@@ -16,6 +16,7 @@ import YAML from "yaml";
 import { initializeSocketIO } from "./apps/sockets/index.ts";
 import { ApiError } from "./lib/ApiError.js";
 import healthcheckRouter from "./apps/restApi/routes/healthcheck.routes.ts";
+
 //TODO: import userRouter from "./apps/restApi/routes/auth/user.routes.ts";
 // TypeScript utilities for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -113,20 +114,21 @@ initializeSocketIO(io);
 // Common error handling middleware
 //TODO: import { errorHandler } from "./middleware";
 import createApolloGraphqlServer from "./apps/graphql/index.ts";
-// (async () => {
-//   const gqlServer = await createApolloGraphqlServer();
+import { expressMiddleware } from "@apollo/server/express4";
+(async () => {
+  const gqlServer = await createApolloGraphqlServer();
 
-//   // Middleware for Apollo Server
-//   app.use(
-//     "/graphql",
-//     cors<cors.CorsRequest>(),
-//     express.json(),
-//     //@ts-ignore
-//     expressMiddleware(gqlServer, {
-//       context: async ({ req }: { req: Request }) => ({
-//         token: req.headers.authorization,
-//       }),
-//     })
-//   );
-// })();
+  // Middleware for Apollo Server
+  app.use(
+    "/graphql",
+    express.json(),
+    //@ts-ignore
+    expressMiddleware(gqlServer, {
+      //@ts-ignore
+      context: async ({ req }: { req: Request }) => ({
+        token: req.headers.authorization,
+      }),
+    })
+  );
+})();
 export { httpServer };
