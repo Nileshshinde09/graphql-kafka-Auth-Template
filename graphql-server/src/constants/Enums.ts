@@ -102,3 +102,10 @@ export const ChatEventEnum = {
 
 export type ChatEventEnum = keyof typeof ChatEventEnum;
 export const AvailableChatEvents = Object.values(ChatEventEnum);
+
+
+export const BullMQ_TOKEN_Enums={
+  SEND_NOTIFICATIONS:"send-notifications",
+  SEND_AUTH_EMAIL:"send-auth-email"
+} as const;
+export type BullMQ_TOKEN_Enums = keyof typeof BullMQ_TOKEN_Enums;

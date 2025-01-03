@@ -29,6 +29,7 @@ const startServer = (): void => {
 
   httpServer.listen(port, () => {
     logger.winstonLogger.info(`📑 Visit the documentation at: http://localhost:${port}`);
+    logger.winstonLogger.info(`🩺 healthcheck at: http://localhost:${port}/api/v1/healthcheck`);
     logger.winstonLogger.info(`⚙️  Server is running on port: ${port}`);
   });
 };
