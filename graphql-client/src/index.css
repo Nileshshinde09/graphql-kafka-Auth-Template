@@ -148,4 +148,10 @@
   body {
     @apply bg-background text-foreground;
   }
+  html{
+    @apply [&::-webkit-scrollbar]:w-3 [&::-webkit-scrollbar-track]:rounded-none [&::-webkit-scrollbar-track]:bg-black 
+           [&::-webkit-scrollbar-thumb]:rounded-none [&::-webkit-scrollbar-thumb]:bg-white
+           dark:[&::-webkit-scrollbar-track]:bg-black 
+           dark:[&::-webkit-scrollbar-thumb]:bg-white;
+  }
 }

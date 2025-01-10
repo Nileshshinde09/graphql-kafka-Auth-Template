@@ -8,7 +8,9 @@ import MorphingText from "./morphingText";
 import Menue from "./menubar";
 import HeroSectionCardHoverEffect from "./HeroSectionCardHover";
 import AppSidebar from "./app-sidebar";
+import HomeHeader from "./Home/homeHeader";
 export {
+  HomeHeader,
   AppSidebar,
   HeroSectionCardHoverEffect,
   MorphingText,

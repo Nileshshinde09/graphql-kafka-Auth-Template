@@ -1,33 +1,39 @@
-import React from "react";
-import {
-  AnimatedBeam,
-  BoxRevealHeroSection,
-  HeroSectionCardHoverEffect,
-  MorphingText,
-} from "@/components";
-import { Separator } from "@/components/ui/separator";
-import WordRotate from "@/components/ui/word-rotate";
+import { HomeHeader } from "@/components";
+import { cn } from "@/lib/utils";
+
 const Home = () => {
   return (
-    <section className="h-screen w-full">
-      <div className="flex justify-center items-center space-x-10">
-        <BoxRevealHeroSection />
-        {/* bg-black dark:bg-white */}
-        <div className="border-black rounded-2xl px-3 py-6 w-[40rem]">
-          <MorphingText className="dark:text-gray-200 text-black text-[1rem] -mt-10 " />
-          <AnimatedBeam className="mx-auto" />
-        </div>
-      </div>
-      <Separator className="borde max-w-7xl mx-auto mt-4" />
-      <div className="max-w-7xl border-4 dark:border-gray-500 border-black rounded-2xl mx-auto bg-black/60">
-        <WordRotate
-          className="text-4xl text-center font-bold text-black dark:text-white"
-          words={["Our Services", "Auth Templates"]}
-        />
-        <HeroSectionCardHoverEffect />
-      </div>
-    </section>
+    <HomeLayout className="w-full">
+      <HomeHeader/>
+    </HomeLayout>
   );
 };
+
+export const HomeLayout = ({
+  children,
+  outerClassName,
+  gardientClassName,
+  className,
+}: {
+  children: React.ReactNode;
+  outerClassName?: string;
+  gardientClassName?: string;
+  className?: string;
+}): React.ReactNode => (
+  <div
+    className={cn(
+      "min-h-screen h-[200%] overflow-hidden w-full dark:bg-black bg-white dark:bg-grid-white/[0.2] bg-grid-black/[0.2] relative",
+      outerClassName
+    )}
+  >
+    <div
+      className={cn(
+        "absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]",
+        gardientClassName
+      )}
+    />
+    <div className={cn("absolute z-40", className)}>{children}</div>
+  </div>
+);
 
 export default Home;
