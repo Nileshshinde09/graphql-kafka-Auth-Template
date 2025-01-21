@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { NeonGradientCard } from "../ui/neon-gradient-card";
 import { motion } from "framer-motion";
 import { useTheme } from "../ui/theme-provider";
-import { FiSlack } from "react-icons/fi";
+// import { FiSlack } from "react-icons/fi";
 const HomeHeader = () => {
   return (
     <motion.div
