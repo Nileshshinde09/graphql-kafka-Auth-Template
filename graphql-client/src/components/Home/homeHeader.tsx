@@ -61,7 +61,7 @@ export const IntroTitle = () => (
       SAuth The safer fast and secure <br />
       web auth solutions
     </motion.h2>
-    <motion.p
+    {/* <motion.p
       className="max-w-xl mx-auto text-sm md:text-lg text-neutral-700 dark:text-neutral-400 text-center"
       initial={{ y: 20, opacity: 0 }}
       whileInView={{ y: 0, opacity: 1 }}
@@ -70,44 +70,46 @@ export const IntroTitle = () => (
     >
       Get the best advices from our experts, including expert artists, painters,
       marathon enthusiasts and RDX, totally free.
-    </motion.p>
+    </motion.p> */}
   </>
 );
 
 export const IntroImage = () => {
   const { theme } = useTheme();
   return (
-    <motion.div
-      className={cn(
-        "w-full max-w-6xl mx-auto my-20 border-2 border-zinc-400/70 rounded-[2.1rem]",
-        theme == "dark" ? "border-zinc-700" : null
-      )}
-      initial={{ scale: 0.8, opacity: 0 }}
-      whileInView={{ scale: 1, opacity: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.8, delay: 0.8 }}
-    >
-      <NeonGradientCard className="hover:scale-[1.02]  transition-transform duration-500"></NeonGradientCard>
-      <div
+    <>
+    
+      <motion.div
         className={cn(
-          "p-5 bg-zinc-800 rounded-[2rem]",
-          theme === "light" ? "bg-zinc-300" : null
+          "w-full max-w-6xl mx-auto my-20 border-2 border-zinc-400/70 rounded-[2.1rem]",
+          theme == "dark" ? "border-zinc-700" : null
         )}
+        initial={{ scale: 0.8, opacity: 0 }}
+        whileInView={{ scale: 1, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, delay: 0.8 }}
       >
         <div
           className={cn(
-            "p-5 bg-black rounded-[2rem] overflow-hidden",
-            theme === "light" ? "p-0" : null
+            "p-5 bg-zinc-800 rounded-[2rem]",
+            theme === "light" ? "bg-zinc-300" : null
           )}
         >
-          <img
-            src={"/home/code-w.png"}
-            className="w-fit rounded-[1.7rem] mx-auto z-0"
-          />
+          <div
+            className={cn(
+              "p-5 bg-black rounded-[2rem] overflow-hidden",
+              theme === "light" ? "p-0" : null
+            )}
+          >
+            <img
+              src={"/home/code-w.png"}
+              className="w-fit rounded-[1.7rem] mx-auto z-0"
+            />
+          </div>
         </div>
-      </div>
-          {/* <FiSlack size={30} className={cn("absolute z-20 bottom-14 left-1/2 -translate-x-1/2",theme === "light" ? "text-zinc-400" : "text-zinc-950 rounded-full")}/> */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 max-w-6xl mx-auto bg-gradient-to-t via-background from-white dark:from-black" />
-    </motion.div>
+        {/* <FiSlack size={30} className={cn("absolute z-20 bottom-14 left-1/2 -translate-x-1/2",theme === "light" ? "text-zinc-400" : "text-zinc-950 rounded-full")}/> */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 max-w-6xl mx-auto bg-gradient-to-t via-background from-white dark:from-black" />
+      </motion.div>
+    </>
   );
 };
