@@ -1,10 +1,12 @@
 import { HomeHeader } from "@/components";
+import BentoCardComponent from "@/components/Home/bentoCardSection";
 import { cn } from "@/lib/utils";
 
 const Home = () => {
   return (
-    <HomeLayout className="w-full">
-      <HomeHeader/>
+    <HomeLayout className="w-full h-full overflow-y-auto">
+      <HomeHeader />
+      <BentoCardComponent/>
     </HomeLayout>
   );
 };
